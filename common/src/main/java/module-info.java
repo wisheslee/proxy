@@ -1,3 +1,3 @@
-module common {
+module com.liji.proxy.common {
 
 }

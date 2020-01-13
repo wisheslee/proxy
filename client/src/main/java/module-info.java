@@ -1,2 +1,3 @@
-module client {
+module com.liji.proxy.client {
+
 }
