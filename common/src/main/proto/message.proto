@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+//option java_multiple_files = true;
+option java_package = "com.liji.proxy.common.model";
+option java_outer_classname = "MessageProto";
+
+package message;
+
+
+
+enum MessageType {
+    AUTHENTICATION = 0;
+    NEW_PROXY = 1;
+    NEW_CONNECTION = 2;
+    RESPONSE = 3;
+}
+
+message Message {
+    MessageType messageType = 1;
+    int64 timestamp = 2;
+    int32 version = 3;
+    int64 reqId = 4;
+    google.protobuf.Any messageBody = 5;
+}
+
+message Authentication {
+    string username = 1;
+    string password = 2;
+}
+
+message NewProxy {
+    int32 proxyPort = 1;
+    string localHost = 2;
+    int32 localPort = 3;
+}
+
+message NewConnection {
+
+}
+
+message Response {
+    int32 status = 1;
+    string msg = 2;
+}
