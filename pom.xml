@@ -40,6 +40,15 @@
                     <configuration>
                         <source>11</source>
                         <target>11</target>
+                        <encoding>UTF-8</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>1.18.10</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <showWarnings>true</showWarnings>
                     </configuration>
                 </plugin>
             </plugins>
