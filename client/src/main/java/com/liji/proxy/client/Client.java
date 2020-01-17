@@ -76,7 +76,7 @@ public class Client {
                     });
             //连接到远程服务，sync表示将连接操作同步化
             ChannelFuture channelFuture = bootstrap.connect(remoteHost, remotePort).sync();
-            channelFuture.channel().writeAndFlush(MessageProto.Message.newBuilder().setMessageBody(MessageProto.Authentication.newBuilder()).build());
+            channelFuture.channel().writeAndFlush(MessageProto.Message.newBuilder().setMessageBody(Any.pack( MessageProto.Authentication.newBuilder().setUsername("liji").setPassword("password").build())).build());
 
             //阻塞一直到channel被关闭
             channelFuture.channel().closeFuture().sync();
@@ -88,25 +88,24 @@ public class Client {
     }
 
     public static void main(String[] args) throws InvalidProtocolBufferException, InterruptedException {
-//        MessageProto.Message message = MessageProto.Message.newBuilder()
-//                .setReqId(1L)
-//                .setTimestamp(System.currentTimeMillis())
-//                .setVersion(1)
-//                .setMessageBody(Any.pack(MessageProto.Authentication.newBuilder().setUsername("liji").setPassword("passwd").build()))
-//                .build();
-//        System.out.println("message=");
-//        System.out.println(message.toString());
-//        MessageProto.Message message1 = MessageProto.Message.parseFrom(message.toByteArray());
-//        System.out.println("message1=");
-//        System.out.println(message1.toString());
-//        if (message1.getMessageBody().is(MessageProto.Authentication.class)) {
-//            MessageProto.Authentication authentication = message1.getMessageBody().unpack(MessageProto.Authentication.class);
-//            System.out.println("authentication=");
-//            System.out.println(authentication.toString());
-//        } else {
-//            System.out.println("type invalid");
-//        }
-        new Client("127.0.0.1", 8081, "127.0.0.1", 8888, 30000).start();
-
+        MessageProto.Message message = MessageProto.Message.newBuilder()
+                .setReqId(1L)
+                .setTimestamp(System.currentTimeMillis())
+                .setVersion(1)
+                .setMessageBody(Any.pack(MessageProto.Authentication.newBuilder().setUsername("liji").setPassword("passwd").build()))
+                .build();
+        System.out.println("message=");
+        System.out.println(message.toString());
+        MessageProto.Message message1 = MessageProto.Message.parseFrom(message.getMessageBody().toByteArray());
+        System.out.println("message1=");
+        System.out.println(message1.toString());
+        if (message1.getMessageBody().is(MessageProto.Authentication.class)) {
+            MessageProto.Authentication authentication = message1.getMessageBody().unpack(MessageProto.Authentication.class);
+            System.out.println("authentication=");
+            System.out.println(authentication.toString());
+        } else {
+            System.out.println("type invalid");
+        }
+//        new Client("127.0.0.1", 8081, "127.0.0.1", 8888, 30000).start();
     }
 }
