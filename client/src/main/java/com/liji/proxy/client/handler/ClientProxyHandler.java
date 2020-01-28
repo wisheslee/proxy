@@ -1,13 +1,13 @@
 package com.liji.proxy.client.handler;
 
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author jili
  * @date 2020/1/27
  */
+@Slf4j
 public class ClientProxyHandler extends ChannelInboundHandlerAdapter {
 
     private Channel localServerChannel;
@@ -18,8 +18,20 @@ public class ClientProxyHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        localServerChannel.writeAndFlush(msg);
-        ctx.channel().read();
-        super.channelRead(ctx, msg);
+        localServerChannel.writeAndFlush(msg).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.isSuccess()) {
+                    ctx.channel().read();
+                }
+            }
+        });
+
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        LOGGER.error(cause.getMessage(), cause);
+        super.exceptionCaught(ctx, cause);
     }
 }

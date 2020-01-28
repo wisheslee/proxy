@@ -8,8 +8,8 @@ import com.liji.proxy.common.model.MessageProto;
  * @date 2020/1/23
  */
 public class MessageFactory {
-    public static MessageProto.NewConnectionFromOuter newConnectionFromOuter(String reqId) {
-        return MessageProto.NewConnectionFromOuter.newBuilder().setReqId(reqId).build();
+    public static MessageProto.NewConnectionFromOuter newConnectionFromOuter(String reqId, String localHost, int localPort) {
+        return MessageProto.NewConnectionFromOuter.newBuilder().setReqId(reqId).setLocalHost(localHost).setLocalPort(localPort).build();
     }
 
     public static <T extends com.google.protobuf.Message> MessageProto.Message wrap(T t) {

@@ -21,7 +21,7 @@ public class ProxyContext {
         if (map.get(port) != null) {
             return false;
         }
-        map.put(port, Proxy.builder().proxyPort(port).remoteHost(remoteHost).remotePort(remotePort).channel(channel).build());
+        map.put(port, Proxy.builder().proxyPort(port).localHost(remoteHost).localPort(remotePort).channel(channel).build());
         return true;
     }
 

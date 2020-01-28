@@ -47,5 +47,6 @@ public class DataTransferReqIdHandler extends ChannelInboundHandlerAdapter {
         }
         ctx.pipeline().remove(this);
         connection.getServerProxyChannel().pipeline().addLast(new ProxyTransferHandler(ctx.channel()));
+        connection.getServerProxyChannel().read();
     }
 }

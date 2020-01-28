@@ -6,6 +6,8 @@ import com.liji.proxy.common.model.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
@@ -43,34 +45,42 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<MessagePro
 //                            ch.pipeline().addLast(new LocalServerHandler());
                         }
                     }).connect(newConnectionFromOuter.getLocalHost(), newConnectionFromOuter.getLocalPort());
-
-            //向数据服务接口发起连接
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.group(ctx.channel().eventLoop());
-            ChannelFuture connectFuture = bootstrap.channel(NioSocketChannel.class)
-                    .handler(new ChannelInitializer<NioSocketChannel>() {
-                        @Override
-                        protected void initChannel(NioSocketChannel ch) throws Exception {
-                            ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new ClientProxyHandler(localServerConnectFuture.channel()));
-                        }
-                    }).connect(ChannelConstants.getServerHost(), ChannelConstants.getServerDataPort());
-            connectFuture.addListener(new ChannelFutureListener() {
+            localServerConnectFuture.addListener(new ChannelFutureListener() {
                 @Override
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
-                        localServerConnectFuture.channel().pipeline().addLast(new LocalServerHandler(future.channel()));
-                        future.channel().writeAndFlush(ctx.alloc().buffer().writeBytes(reqId.getBytes(StandardCharsets.UTF_8))).addListener(new ChannelFutureListener() {
+                        //向数据服务接口发起连接
+                        Bootstrap bootstrap = new Bootstrap();
+                        bootstrap.group(ctx.channel().eventLoop());
+                        ChannelFuture connectFuture = bootstrap.channel(NioSocketChannel.class)
+                                .handler(new ChannelInitializer<NioSocketChannel>() {
+                                    @Override
+                                    protected void initChannel(NioSocketChannel ch) throws Exception {
+                                        ChannelPipeline pipeline = ch.pipeline();
+                                        pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
+                                        pipeline.addLast(new ClientProxyHandler(localServerConnectFuture.channel()));
+                                    }
+                                }).connect(ChannelConstants.getServerHost(), ChannelConstants.getServerDataPort());
+                        connectFuture.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture future) throws Exception {
-                                System.out.println(future);
+                                if (future.isSuccess()) {
+                                    localServerConnectFuture.channel().pipeline().addLast(new LocalServerHandler(future.channel()));
+                                    future.channel().writeAndFlush(ctx.alloc().buffer().writeBytes(reqId.getBytes(StandardCharsets.UTF_8))).addListener(new ChannelFutureListener() {
+                                        @Override
+                                        public void operationComplete(ChannelFuture future) throws Exception {
+                                            System.out.println(future);
+                                        }
+                                    });
+                                }
                             }
                         });
+                        connectFuture.channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
+                    } else {
+                        LOGGER.error(future.cause().getMessage(), future.cause());
                     }
                 }
             });
-            connectFuture.channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
-
         }
     }
 }

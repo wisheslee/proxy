@@ -19,6 +19,5 @@ public class LocalServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         toServerChannel.writeAndFlush(msg);
-        super.channelRead(ctx, msg);
     }
 }

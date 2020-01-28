@@ -13,7 +13,7 @@ import lombok.Getter;
 @Getter
 public class Proxy {
     private int proxyPort;
-    private String remoteHost;
-    private int remotePort;
+    private String localHost;
+    private int localPort;
     private Channel channel;
 }
