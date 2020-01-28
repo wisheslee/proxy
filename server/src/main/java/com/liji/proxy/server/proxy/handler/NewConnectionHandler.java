@@ -1,5 +1,6 @@
 package com.liji.proxy.server.proxy.handler;
 
+import com.google.protobuf.Any;
 import com.liji.proxy.common.utils.MessageFactory;
 import com.liji.proxy.server.proxy.ConnectionContext;
 import com.liji.proxy.server.proxy.Proxy;
@@ -22,7 +23,7 @@ public class NewConnectionHandler extends ChannelInboundHandlerAdapter {
         Proxy proxy = ProxyContext.get(localPort);
         String reqId = UUID.randomUUID().toString();
         ConnectionContext.putIfAbsent(reqId, ctx.channel());
-        proxy.getChannel().writeAndFlush(MessageFactory.newConnectionFromOuter(UUID.randomUUID().toString()));
+        proxy.getChannel().writeAndFlush(MessageFactory.wrap(MessageFactory.newConnectionFromOuter(UUID.randomUUID().toString())));
         super.channelActive(ctx);
     }
 

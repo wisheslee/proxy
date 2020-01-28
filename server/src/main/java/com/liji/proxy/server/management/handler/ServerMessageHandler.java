@@ -1,6 +1,7 @@
 package com.liji.proxy.server.management.handler;
 
 import com.liji.proxy.common.model.MessageProto;
+import com.liji.proxy.common.utils.MessageFactory;
 import com.liji.proxy.common.utils.MessageResponseFactory;
 import com.liji.proxy.server.proxy.ProxyContext;
 import com.liji.proxy.server.proxy.handler.NewConnectionHandler;
@@ -25,8 +26,7 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<MessagePro
             LOGGER.info("receive auth message");
             MessageProto.Authentication authentication = msg.getMessageBody().unpack(MessageProto.Authentication.class);
             LOGGER.info("username={}, password={}", authentication.getUsername(), authentication.getPassword());
-            ctx.writeAndFlush(MessageProto.Response.newBuilder().setStatus(200));
-            //记录一个client
+            ctx.writeAndFlush(MessageFactory.wrap(MessageResponseFactory.success()));
         }
         //newProxy
         if (msg.getMessageBody().is(MessageProto.NewProxy.class)) {
@@ -46,11 +46,11 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<MessagePro
                         }
                     });
             ChannelFuture bindFuture = serverBootstrap.bind("127.0.0.1", newProxy.getProxyPort());
-            bindFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+            bindFuture.addListener(new ChannelFutureListener() {
                 @Override
-                public void operationComplete(Future<? super Void> future) throws Exception {
+                public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
-                        if (ProxyContext.putIfAbsent(newProxy.getProxyPort(), newProxy.getLocalHost(), newProxy.getLocalPort(), bindFuture.channel())){
+                        if (ProxyContext.putIfAbsent(newProxy.getProxyPort(), newProxy.getLocalHost(), newProxy.getLocalPort(), ctx.channel())){
                             ctx.writeAndFlush(MessageResponseFactory.success());
                             return;
                         }
@@ -66,4 +66,6 @@ public class ServerMessageHandler extends SimpleChannelInboundHandler<MessagePro
         }
 
     }
+
+
 }

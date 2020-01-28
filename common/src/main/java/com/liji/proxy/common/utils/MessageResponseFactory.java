@@ -7,20 +7,20 @@ import com.liji.proxy.common.model.MessageProto;
  * @date 2020/1/23
  */
 public class MessageResponseFactory {
-    public static MessageProto.Response success() {
-        return MessageProto.Response.newBuilder().setStatus(200).build();
+    public static MessageProto.Message success() {
+        return MessageFactory.wrap(MessageProto.Response.newBuilder().setStatus(200).build());
     }
 
-    public static MessageProto.Response fail() {
+    public static MessageProto.Message fail() {
         return fail(400, null);
     }
 
-    public static MessageProto.Response fail(String msg) {
+    public static MessageProto.Message fail(String msg) {
         return fail(400, msg);
     }
 
-    public static MessageProto.Response fail(int status, String msg) {
-        return MessageProto.Response.newBuilder().setStatus(status).setMsg(msg).build();
+    public static MessageProto.Message fail(int status, String msg) {
+        return MessageFactory.wrap(MessageProto.Response.newBuilder().setStatus(status).setMsg(msg).build());
     }
 
 

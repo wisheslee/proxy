@@ -19,7 +19,6 @@ message Message {
 message Authentication {
     string username = 1;
     string password = 2;
-    string clientId = 3;
 }
 
 message NewProxy {
