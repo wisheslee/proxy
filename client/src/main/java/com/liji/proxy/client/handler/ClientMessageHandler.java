@@ -1,9 +1,17 @@
 package com.liji.proxy.client.handler;
 
+import com.liji.proxy.client.Client;
+import com.liji.proxy.common.constants.ChannelConstants;
 import com.liji.proxy.common.model.MessageProto;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.*;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
+
+import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 /**
  * @author jili
@@ -18,6 +26,47 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<MessagePro
             LOGGER.info("response = {}", response);
         } else {
             LOGGER.info("receive a message={}", msg);
+        }
+
+        if (msg.getMessageBody().is(MessageProto.NewConnectionFromOuter.class)) {
+            LOGGER.info("receive newConnectionFromOuter message");
+            MessageProto.NewConnectionFromOuter newConnectionFromOuter = msg.getMessageBody().unpack(MessageProto.NewConnectionFromOuter.class);
+            String reqId = newConnectionFromOuter.getReqId();
+
+            //向本地服务发起连接
+            Bootstrap localServerBootstrap = new Bootstrap();
+            localServerBootstrap.group(ctx.channel().eventLoop());
+            ChannelFuture localServerConnectFuture = localServerBootstrap.channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<NioSocketChannel>() {
+                        @Override
+                        protected void initChannel(NioSocketChannel ch) throws Exception {
+//                            ch.pipeline().addLast(new LocalServerHandler());
+                        }
+                    }).connect(newConnectionFromOuter.getLocalHost(), newConnectionFromOuter.getLocalPort());
+
+            //向数据服务接口发起连接
+            Bootstrap bootstrap = new Bootstrap();
+            bootstrap.group(ctx.channel().eventLoop());
+            ChannelFuture connectFuture = bootstrap.channel(NioSocketChannel.class)
+                    .handler(new ChannelInitializer<NioSocketChannel>() {
+                        @Override
+                        protected void initChannel(NioSocketChannel ch) throws Exception {
+                            ChannelPipeline pipeline = ch.pipeline();
+                            pipeline.addLast(new ClientProxyHandler(localServerConnectFuture.channel()));
+                        }
+                    }).connect(ChannelConstants.getServerHost(), ChannelConstants.getServerDataPort());
+            connectFuture.addListener(new ChannelFutureListener() {
+                @Override
+                public void operationComplete(ChannelFuture future) throws Exception {
+                    if (future.isSuccess()) {
+                        localServerConnectFuture.channel().pipeline().addLast(new LocalServerHandler(future.channel()));
+                        future.channel().writeAndFlush(reqId.getBytes(StandardCharsets.UTF_8));
+                        ctx.channel().read();
+                    }
+                }
+            });
+            connectFuture.channel().closeFuture().addListener(ChannelFutureListener.CLOSE);
+
         }
     }
 }

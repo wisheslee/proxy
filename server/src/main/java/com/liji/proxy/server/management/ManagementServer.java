@@ -1,5 +1,6 @@
 package com.liji.proxy.server.management;
 
+import com.liji.proxy.common.constants.ChannelConstants;
 import com.liji.proxy.common.model.MessageProto;
 import com.liji.proxy.server.management.handler.ServerMessageHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -20,11 +21,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
  * @date 2020/1/16
  */
 public class ManagementServer {
-    private int port;
-
-    public ManagementServer(int port) {
-        this.port = port;
-    }
 
     public void start () throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
@@ -47,7 +43,7 @@ public class ManagementServer {
                             pipeline.addLast(new ServerMessageHandler());
                         }
                     });
-            ChannelFuture future = serverBootstrap.bind(port).sync();
+            ChannelFuture future = serverBootstrap.bind(ChannelConstants.getServerManagementPort()).sync();
             future.channel().closeFuture().sync();
         } finally {
             boss.shutdownGracefully();
@@ -55,9 +51,5 @@ public class ManagementServer {
             biz.shutdownGracefully();
         }
 
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        new ManagementServer(8888).start();
     }
 }

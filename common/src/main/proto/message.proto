@@ -19,6 +19,7 @@ message Message {
 message Authentication {
     string username = 1;
     string password = 2;
+    string clientId = 3;
 }
 
 message NewProxy {
@@ -27,8 +28,10 @@ message NewProxy {
     int32 localPort = 3;
 }
 
-message NewConnection {
-
+message NewConnectionFromOuter {
+    string reqId = 1;
+    string localHost = 2;
+    int32 localPort = 3;
 }
 
 message Response {
