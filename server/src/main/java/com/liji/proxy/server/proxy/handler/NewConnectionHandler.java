@@ -23,7 +23,7 @@ public class NewConnectionHandler extends ChannelInboundHandlerAdapter {
         Proxy proxy = ProxyContext.get(localPort);
         String reqId = UUID.randomUUID().toString();
         ConnectionContext.putIfAbsent(reqId, ctx.channel());
-        proxy.getChannel().writeAndFlush(MessageFactory.wrap(MessageFactory.newConnectionFromOuter(UUID.randomUUID().toString())));
+        proxy.getChannel().writeAndFlush(MessageFactory.wrap(MessageFactory.newConnectionFromOuter(reqId)));
         super.channelActive(ctx);
     }
 

@@ -60,8 +60,12 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<MessagePro
                 public void operationComplete(ChannelFuture future) throws Exception {
                     if (future.isSuccess()) {
                         localServerConnectFuture.channel().pipeline().addLast(new LocalServerHandler(future.channel()));
-                        future.channel().writeAndFlush(reqId.getBytes(StandardCharsets.UTF_8));
-                        ctx.channel().read();
+                        future.channel().writeAndFlush(ctx.alloc().buffer().writeBytes(reqId.getBytes(StandardCharsets.UTF_8))).addListener(new ChannelFutureListener() {
+                            @Override
+                            public void operationComplete(ChannelFuture future) throws Exception {
+                                System.out.println(future);
+                            }
+                        });
                     }
                 }
             });

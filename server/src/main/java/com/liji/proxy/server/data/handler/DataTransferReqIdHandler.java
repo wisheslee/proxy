@@ -23,7 +23,7 @@ public class DataTransferReqIdHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        ctx.channel().read();
+//        ctx.read();
         super.channelActive(ctx);
     }
 
@@ -42,7 +42,9 @@ public class DataTransferReqIdHandler extends ChannelInboundHandlerAdapter {
         Connection connection = ConnectionContext.get(reqId);
         ctx.pipeline().addLast(new DataTransferHandler(connection));
 
-        ctx.fireChannelRead(innerBuffer);
+        if (innerBuffer.readableBytes() > 0) {
+            ctx.fireChannelRead(innerBuffer.readRetainedSlice(innerBuffer.readableBytes()));
+        }
         ctx.pipeline().remove(this);
         connection.getServerProxyChannel().pipeline().addLast(new ProxyTransferHandler(ctx.channel()));
     }

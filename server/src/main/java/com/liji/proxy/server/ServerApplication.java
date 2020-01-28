@@ -9,7 +9,26 @@ import com.liji.proxy.server.management.ManagementServer;
  */
 public class ServerApplication {
     public static void main(String[] args) throws InterruptedException {
-        new ManagementServer().start();
-        new DataTransferServer().start();
+        Thread manageThread = new Thread(() -> {
+            try {
+                new ManagementServer().start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+        Thread dataThread = new Thread(() -> {
+            try {
+                new DataTransferServer().start();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+
+        manageThread.start();
+        dataThread.start();
+        manageThread.join();
+        dataThread.join();
     }
 }
