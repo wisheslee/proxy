@@ -11,6 +11,7 @@ import java.net.SocketAddress;
  */
 
 @Slf4j
+@ChannelHandler.Sharable
 public class ExceptionHandler extends ChannelDuplexHandler {
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {

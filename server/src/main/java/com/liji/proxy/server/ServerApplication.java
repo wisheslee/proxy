@@ -1,6 +1,7 @@
 package com.liji.proxy.server;
 
-import com.liji.proxy.server.data.DataTransferServer;
+import com.liji.proxy.common.constants.DefaultConstants;
+import com.liji.proxy.server.data.DataServer;
 import com.liji.proxy.server.management.ManagementServer;
 
 /**
@@ -9,26 +10,11 @@ import com.liji.proxy.server.management.ManagementServer;
  */
 public class ServerApplication {
     public static void main(String[] args) throws InterruptedException {
-        Thread manageThread = new Thread(() -> {
-            try {
-                new ManagementServer().start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        });
-
-        Thread dataThread = new Thread(() -> {
-            try {
-                new DataTransferServer().start();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-
-        manageThread.start();
+        Thread managementThread = new Thread(new ManagementServer(DefaultConstants.SERVER_MANAGEMENT_PORT));
+        Thread dataThread = new Thread(new DataServer(DefaultConstants.SERVER_DATA_PORT));
+        managementThread.start();
         dataThread.start();
-        manageThread.join();
+        managementThread.join();
         dataThread.join();
     }
 }

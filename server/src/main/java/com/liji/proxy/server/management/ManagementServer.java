@@ -1,8 +1,9 @@
 package com.liji.proxy.server.management;
 
-import com.liji.proxy.common.constants.DefaultConstants;
+import com.liji.proxy.common.handler.ExceptionHandler;
 import com.liji.proxy.common.model.MessageProto;
-import com.liji.proxy.server.management.handler.ServerMessageHandler;
+import com.liji.proxy.server.management.handler.AuthHandler;
+import com.liji.proxy.server.management.handler.ManagementServerMessageHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -14,47 +15,63 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author jili
  * @date 2020/1/16
  */
-public class ManagementServer implements Runnable{
+@Slf4j
+public class ManagementServer implements Runnable {
+
+    private int port;
+
+    public ManagementServer(int port) {
+        this.port = port;
+    }
 
     @Override
     public void run() {
-
-    }
-
-    public void start () throws InterruptedException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
-        NioEventLoopGroup boss = new NioEventLoopGroup(0, new DefaultThreadFactory("boss"));
-        NioEventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("worker"));
-        NioEventLoopGroup biz = new NioEventLoopGroup(10, new DefaultThreadFactory("biz"));
+        NioEventLoopGroup boss = new NioEventLoopGroup(0, new DefaultThreadFactory("managementServerBoss"));
+        NioEventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("managementServerWorker"));
 
         try {
-            serverBootstrap.channel(NioServerSocketChannel.class)
+            LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
+            ExceptionHandler exceptionHandler = new ExceptionHandler();
+            AuthHandler authHandler = new AuthHandler();
+            ManagementServerMessageHandler messageHandler = new ManagementServerMessageHandler();
+
+            serverBootstrap
+                    .channel(NioServerSocketChannel.class)
                     .group(boss, worker)
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new ProtobufVarint32FrameDecoder());
-                            pipeline.addLast(new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
-                            pipeline.addLast(new ProtobufVarint32LengthFieldPrepender());
-                            pipeline.addLast(new ProtobufEncoder());
+                            pipeline.addLast("managementServerLoggingHanlder", loggingHandler);
 
-                            pipeline.addLast(new ServerMessageHandler());
+                            //protobuf编解码器
+                            pipeline.addLast("managementServerFrameDecoder", new ProtobufVarint32FrameDecoder());
+                            pipeline.addLast("managementMessageDecoder", new ProtobufDecoder(MessageProto.Message.getDefaultInstance()));
+                            pipeline.addLast("managementServerFrameEncoder", new ProtobufVarint32LengthFieldPrepender());
+                            pipeline.addLast("managementServerMessageEncoder", new ProtobufEncoder());
+
+                            pipeline.addLast("managementServerAuthHandler", authHandler);
+                            pipeline.addLast("managementServerMessageHandler", messageHandler);
+                            pipeline.addLast("managementServerExceptionHandler", exceptionHandler);
                         }
                     });
-            ChannelFuture future = serverBootstrap.bind(DefaultConstants.SERVER_MANAGEMENT_PORT).sync();
+            ChannelFuture future = serverBootstrap.bind(port).sync();
             future.channel().closeFuture().sync();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         } finally {
             boss.shutdownGracefully();
             worker.shutdownGracefully();
-            biz.shutdownGracefully();
         }
-
     }
 }

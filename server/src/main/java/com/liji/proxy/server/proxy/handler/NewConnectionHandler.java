@@ -1,10 +1,10 @@
 package com.liji.proxy.server.proxy.handler;
 
-import com.google.protobuf.Any;
+import com.liji.proxy.common.model.MessageProto;
 import com.liji.proxy.common.utils.MessageFactory;
-import com.liji.proxy.server.proxy.ConnectionContext;
-import com.liji.proxy.server.proxy.Proxy;
-import com.liji.proxy.server.proxy.ProxyContext;
+import com.liji.proxy.server.common.ConnectionContext;
+import com.liji.proxy.server.common.Proxy;
+import com.liji.proxy.server.common.ProxyContext;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
@@ -23,7 +23,9 @@ public class NewConnectionHandler extends ChannelInboundHandlerAdapter {
         Proxy proxy = ProxyContext.get(localPort);
         String reqId = UUID.randomUUID().toString();
         ConnectionContext.putIfAbsent(reqId, ctx.channel());
-        proxy.getChannel().writeAndFlush(MessageFactory.wrap(MessageFactory.newConnectionFromOuter(reqId, proxy.getLocalHost(), proxy.getLocalPort())));
+        proxy.getChannel().writeAndFlush(MessageFactory.newMessage(
+                MessageProto.NewConnectionFromOuter.newBuilder().setLocalHost(proxy.getLocalHost()).setLocalPort(proxy.getLocalPort()).build(),
+                reqId));
         super.channelActive(ctx);
     }
 

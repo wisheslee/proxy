@@ -10,15 +10,19 @@ package message;
 
 
 message Message {
-    int64 timestamp = 2;
-    int32 version = 3;
-    int64 reqId = 4;
-    google.protobuf.Any messageBody = 5;
+    Header header = 1;
+    google.protobuf.Any body = 2;
 }
 
+message Header {
+    int64 timestamp = 1;
+    int32 version = 2;
+    string reqId = 3;
+}
+
+//以下都是messageBody的不同类型
 message Authentication {
-    string username = 1;
-    string password = 2;
+    string authSecret = 1;
 }
 
 message NewProxy {
@@ -28,9 +32,12 @@ message NewProxy {
 }
 
 message NewConnectionFromOuter {
-    string reqId = 1;
     string localHost = 2;
     int32 localPort = 3;
+}
+
+message KeepAlive {
+
 }
 
 message Response {

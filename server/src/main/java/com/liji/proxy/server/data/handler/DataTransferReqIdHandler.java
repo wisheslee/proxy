@@ -1,16 +1,13 @@
 package com.liji.proxy.server.data.handler;
 
-import com.liji.proxy.server.proxy.Connection;
-import com.liji.proxy.server.proxy.ConnectionContext;
+import com.liji.proxy.server.common.Connection;
+import com.liji.proxy.server.common.ConnectionContext;
 import com.liji.proxy.server.proxy.handler.ProxyTransferHandler;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.handler.codec.ByteToMessageDecoder;
 
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 /**
  * @author jili

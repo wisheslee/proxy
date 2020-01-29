@@ -7,4 +7,5 @@ module com.liji.proxy.common {
     exports com.liji.proxy.common.model;
     exports com.liji.proxy.common.utils;
     exports com.liji.proxy.common.constants;
+    exports com.liji.proxy.common.handler;
 }

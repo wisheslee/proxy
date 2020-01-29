@@ -19,17 +19,17 @@ import java.nio.charset.StandardCharsets;
 public class ClientMessageHandler extends SimpleChannelInboundHandler<MessageProto.Message> {
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, MessageProto.Message msg) throws Exception {
-        if (msg.getMessageBody().is(MessageProto.Response.class)) {
-            MessageProto.Response response = msg.getMessageBody().unpack(MessageProto.Response.class);
+        if (msg.getBody().is(MessageProto.Response.class)) {
+            MessageProto.Response response = msg.getBody().unpack(MessageProto.Response.class);
             LOGGER.info("response = {}", response);
         } else {
             LOGGER.info("receive a message={}", msg);
         }
 
-        if (msg.getMessageBody().is(MessageProto.NewConnectionFromOuter.class)) {
+        if (msg.getBody().is(MessageProto.NewConnectionFromOuter.class)) {
             LOGGER.info("receive newConnectionFromOuter message");
-            MessageProto.NewConnectionFromOuter newConnectionFromOuter = msg.getMessageBody().unpack(MessageProto.NewConnectionFromOuter.class);
-            String reqId = newConnectionFromOuter.getReqId();
+            MessageProto.NewConnectionFromOuter newConnectionFromOuter = msg.getBody().unpack(MessageProto.NewConnectionFromOuter.class);
+            String reqId = msg.getHeader().getReqId();
 
             //向本地服务发起连接
             Bootstrap localServerBootstrap = new Bootstrap();

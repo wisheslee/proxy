@@ -1,7 +1,6 @@
 package com.liji.proxy.server.data.handler;
 
-import com.liji.proxy.server.proxy.Connection;
-import io.netty.buffer.ByteBuf;
+import com.liji.proxy.server.common.Connection;
 import io.netty.channel.*;
 import lombok.extern.slf4j.Slf4j;
 

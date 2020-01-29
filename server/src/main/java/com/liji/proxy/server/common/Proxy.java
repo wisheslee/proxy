@@ -1,8 +1,7 @@
-package com.liji.proxy.server.proxy;
+package com.liji.proxy.server.common;
 
 import io.netty.channel.Channel;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 
 /**

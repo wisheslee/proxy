@@ -1,8 +1,9 @@
-package com.liji.proxy.server.proxy;
+package com.liji.proxy.server.common;
 
 import io.netty.channel.Channel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author jili
  * @date 2020/1/23
  */
+@Slf4j
 public class ProxyContext {
 
     private static ConcurrentHashMap<Integer, Proxy> map = new ConcurrentHashMap<>();
@@ -28,5 +30,4 @@ public class ProxyContext {
     public static Proxy get(int port) {
         return map.get(port);
     }
-
 }
