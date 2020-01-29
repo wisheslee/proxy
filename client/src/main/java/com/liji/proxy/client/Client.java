@@ -3,7 +3,7 @@ package com.liji.proxy.client;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.liji.proxy.client.handler.ClientMessageHandler;
-import com.liji.proxy.common.constants.ChannelConstants;
+import com.liji.proxy.common.constants.DefaultConstants;
 import com.liji.proxy.common.model.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
@@ -18,7 +18,6 @@ import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.DefaultThreadFactory;
-import lombok.Getter;
 
 /**
  * client与server保持长连接，用来做管理消息的交换。数据通道需要额外建立
@@ -70,7 +69,7 @@ public class Client {
                         }
                     });
             //连接到远程服务，sync表示将连接操作同步化
-            ChannelFuture channelFuture = bootstrap.connect(ChannelConstants.getServerHost(), ChannelConstants.getServerManagementPort()).sync();
+            ChannelFuture channelFuture = bootstrap.connect(DefaultConstants.SERVER_HOST, DefaultConstants.SERVER_MANAGEMENT_PORT).sync();
             MessageProto.NewProxy newProxy = MessageProto.NewProxy.newBuilder().setProxyPort(proxyPort).setLocalPort(localPort).setLocalHost(localHost).build();
             channelFuture.channel().writeAndFlush(MessageProto.Message.newBuilder().setMessageBody(Any.pack(newProxy)).build());
 

@@ -1,7 +1,6 @@
 package com.liji.proxy.server.data;
 
-import com.liji.proxy.common.constants.ChannelConstants;
-import com.liji.proxy.server.data.handler.DataTransferHandler;
+import com.liji.proxy.common.constants.DefaultConstants;
 import com.liji.proxy.server.data.handler.DataTransferReqIdHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
@@ -33,7 +32,7 @@ public class DataTransferServer {
                             ch.pipeline().addLast(new DataTransferReqIdHandler());
                         }
                     }).childOption(ChannelOption.AUTO_READ, true)
-                    .bind(ChannelConstants.getServerDataPort()).sync();
+                    .bind(DefaultConstants.SERVER_DATA_PORT).sync();
             connectFuture.channel().closeFuture().sync();
         } finally {
             bossGroup.shutdownGracefully();

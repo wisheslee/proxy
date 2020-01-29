@@ -1,19 +1,15 @@
 package com.liji.proxy.client.handler;
 
-import com.liji.proxy.client.Client;
-import com.liji.proxy.common.constants.ChannelConstants;
+import com.liji.proxy.common.constants.DefaultConstants;
 import com.liji.proxy.common.model.MessageProto;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
-import java.util.UUID;
 
 /**
  * @author jili
@@ -60,7 +56,7 @@ public class ClientMessageHandler extends SimpleChannelInboundHandler<MessagePro
                                         pipeline.addLast(new LoggingHandler(LogLevel.DEBUG));
                                         pipeline.addLast(new ClientProxyHandler(localServerConnectFuture.channel()));
                                     }
-                                }).connect(ChannelConstants.getServerHost(), ChannelConstants.getServerDataPort());
+                                }).connect(DefaultConstants.SERVER_HOST, DefaultConstants.SERVER_DATA_PORT);
                         connectFuture.addListener(new ChannelFutureListener() {
                             @Override
                             public void operationComplete(ChannelFuture future) throws Exception {
