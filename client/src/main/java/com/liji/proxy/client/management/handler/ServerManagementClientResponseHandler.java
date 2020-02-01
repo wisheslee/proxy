@@ -25,5 +25,6 @@ public class ServerManagementClientResponseHandler extends SimpleChannelInboundH
             MessageProto.Response response = msg.getBody().unpack(MessageProto.Response.class);
             client.handleResponse(response);
         }
+        ctx.fireChannelRead(msg);
     }
 }

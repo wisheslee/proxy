@@ -29,7 +29,7 @@ public class ServerDataClientImpl implements ServerDataClient {
 
     public ServerDataClientImpl(LocalServerClient localServerClient, Channel managementClientChannel, String reqId, MessageProto.Header header) {
 
-        setLocalServerClientChannel(localServerClient.getServerDataClientChannel());
+        setLocalServerClientChannel(localServerClient.getChannel());
 
         Server serverData = clientApplicationContext.getClientConfig().getServerData();
 

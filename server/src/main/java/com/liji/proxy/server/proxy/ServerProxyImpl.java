@@ -34,7 +34,7 @@ public class ServerProxyImpl implements ServerProxy {
     @Override
     public void notifyServerManagementNewConnection(Channel proxyConnectionChannel) {
         String reqId = UUID.randomUUID().toString();
-        serverApplicationContext.getConnectionContext().newConnection(reqId, new ProxyConnectionImpl(this));
+        serverApplicationContext.getConnectionContext().newConnection(reqId, new ProxyConnectionImpl(this, proxyConnectionChannel));
         Server localServer = proxy.getLocalServer();
         serverManagementChannel.writeAndFlush(MessageFactory.newMessage(
                 MessageProto.NewConnectionFromOuter.newBuilder().setLocalHost(localServer.getHost()).setLocalPort(localServer.getPort()).build(),
@@ -56,5 +56,15 @@ public class ServerProxyImpl implements ServerProxy {
                 }
             }
         });
+    }
+
+    @Override
+    public Proxy getProxy() {
+        return proxy;
+    }
+
+    @Override
+    public Channel getServerProxyChannel() {
+        return serverProxyChannel;
     }
 }

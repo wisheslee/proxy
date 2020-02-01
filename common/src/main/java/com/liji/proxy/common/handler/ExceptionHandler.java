@@ -21,17 +21,17 @@ public class ExceptionHandler extends ChannelDuplexHandler {
 
     @Override
     public void connect(ChannelHandlerContext ctx, SocketAddress remoteAddress, SocketAddress localAddress, ChannelPromise promise) throws Exception {
-        super.connect(ctx, remoteAddress, localAddress, promise.addListener(outBoundExceptionListener()));
+        ctx.connect(remoteAddress, localAddress, promise.addListener(outBoundExceptionListener()));
     }
 
     @Override
     public void bind(ChannelHandlerContext ctx, SocketAddress localAddress, ChannelPromise promise) throws Exception {
-        super.bind(ctx, localAddress, promise.addListener(outBoundExceptionListener()));
+        ctx.bind(localAddress, promise.addListener(outBoundExceptionListener()));
     }
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-        super.write(ctx, msg, promise.addListener(outBoundExceptionListener()));
+        ctx.write(msg, promise.addListener(outBoundExceptionListener()));
     }
 
     private ChannelFutureListener outBoundExceptionListener() {

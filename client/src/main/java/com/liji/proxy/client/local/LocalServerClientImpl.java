@@ -57,7 +57,7 @@ public class LocalServerClientImpl implements LocalServerClient {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    newClientToServerData(future.channel(), reqId, header);
+                    newClientToServerData(managementClientChannel, reqId, header);
                 } else {
                     Throwable cause = future.cause();
                     LOGGER.error(cause.getMessage(), cause);
@@ -86,5 +86,10 @@ public class LocalServerClientImpl implements LocalServerClient {
     @Override
     public Channel getServerDataClientChannel() {
         return serverDataClientChannel;
+    }
+
+    @Override
+    public Channel getChannel() {
+        return channel;
     }
 }

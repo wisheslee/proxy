@@ -6,6 +6,7 @@ import com.liji.proxy.server.common.context.ServerApplicationContext;
 import com.liji.proxy.server.common.context.ServerApplicationContextImpl;
 import com.liji.proxy.server.data.handler.TransferProxyConnectionDataToClientHandler;
 import com.liji.proxy.server.data.handler.ServerDataNewConnectionFromClientHandler;
+import com.liji.proxy.server.proxy.ServerProxy;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -43,8 +44,8 @@ public class ServerDataImpl implements ServerData {
                         @Override
                         protected void initChannel(NioSocketChannel ch) throws Exception {
                             ch.pipeline().addLast("serverDataLog", GlobalSharableHandlerFactory.getLoggingHandler());
-                            ch.pipeline().addLast("serverDataReqIdHandler", new ServerDataNewConnectionFromClientHandler(that));
-                            ch.pipeline().addLast("serverData", new TransferProxyConnectionDataToClientHandler(that));
+                            ch.pipeline().addLast("serverDataNewConnectionHandler", new ServerDataNewConnectionFromClientHandler(that));
+                            ch.pipeline().addLast("serverDataTransferHandler", new TransferProxyConnectionDataToClientHandler(that));
                             ch.pipeline().addLast("serverDataException", GlobalSharableHandlerFactory.getExceptionHandler());
                         }
                         // TODO: jili 2020/1/29 auto_read 是否必要
@@ -66,11 +67,13 @@ public class ServerDataImpl implements ServerData {
     public void handleClientNewConnection(String reqId, Channel serverDataChannel) {
         ProxyConnection proxyConnection = serverApplicationContext.getConnectionContext().getConnection(reqId);
         serverDataChannel.attr(PROXY_CONNECTION_KEY).set(proxyConnection);
+        proxyConnection.getProxyConnectionChannel().attr(ServerProxy.dataServerChannelKey).set(serverDataChannel);
         proxyConnection.getServerProxy().startRead(proxyConnection.getProxyConnectionChannel());
     }
 
+
     @Override
-    public void transferProxyConnectionDataToClient(Channel proxyConnectionChannel, Object msg) {
+    public void transferToProxy(Channel proxyConnectionChannel, Object msg) {
         proxyConnectionChannel.writeAndFlush(msg).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {

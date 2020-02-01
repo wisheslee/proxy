@@ -17,6 +17,9 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
+import java.net.InetSocketAddress;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,7 +35,8 @@ public class ProxyContextImpl implements ProxyContext {
     // TODO: jili 2020/1/31 记得关闭
     private EventLoopGroup proxyServerBossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("proxyServerBossGroup"));
     private EventLoopGroup proxyServerWorkerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("proxyServerWorkerGroup"));
-    private Map<Integer, ServerProxyImpl> map = new ConcurrentHashMap<>();
+    private Map<Integer, ServerProxy> map = new ConcurrentHashMap<>();
+    private Map<InetSocketAddress, List<ServerProxy>> clientProxyListMap = new ConcurrentHashMap<>();
 
     public static ProxyContext newInstance() {
         return proxyContext;
@@ -40,7 +44,7 @@ public class ProxyContextImpl implements ProxyContext {
 
     // TODO: jili 2020/1/30 端口绑定的并发处理
     @Override
-    public void newProxyServer(Proxy proxy, Channel serverManagementChannel, MessageProto.Header header) {
+    public void newServerProxy(Proxy proxy, Channel serverManagementChannel, MessageProto.Header header) {
         if (map.containsKey(proxy.getProxyPort())) {
             serverManagementChannel.writeAndFlush(MessageResponseFactory.fail(header, "端口已被占用"));
             return;
@@ -52,7 +56,7 @@ public class ProxyContextImpl implements ProxyContext {
         ServerProxyNewConnectionHandler serverProxyNewConnectionHandler = new ServerProxyNewConnectionHandler();
         ServerProxyTransferDataToServerDataHandler serverProxyTransferDataToServerDataHandler = new ServerProxyTransferDataToServerDataHandler();
 
-
+        // TODO: jili 2020/2/2 idle检测
         serverBootstrap
                 .channel(NioServerSocketChannel.class)
                 //不能AUTO_READ, 需要在收到新请求，在client与serverData连接建立成功后手动读；
@@ -76,8 +80,12 @@ public class ProxyContextImpl implements ProxyContext {
                     public void operationComplete(ChannelFuture future) throws Exception {
                         MessageProto.Header header = MessageFactory.newHeader();
                         if (future.isSuccess()) {
-                            ServerProxyImpl proxyServer = new ServerProxyImpl(proxy, future.channel(), serverManagementChannel);
-                            if (map.putIfAbsent(proxy.getProxyPort(), proxyServer) == null) {
+                            ServerProxyImpl serverProxy = new ServerProxyImpl(proxy, future.channel(), serverManagementChannel);
+
+                            //更新client对应proxyServer列表
+                            clientProxyListMap.get(serverManagementChannel.remoteAddress()).add(serverProxy);
+
+                            if (map.putIfAbsent(proxy.getProxyPort(), serverProxy) == null) {
                                 serverManagementChannel.writeAndFlush(MessageResponseFactory.success(header));
                             } else {
                                 serverManagementChannel.writeAndFlush(MessageResponseFactory.fail(header, "端口已被占用"));
@@ -92,5 +100,21 @@ public class ProxyContextImpl implements ProxyContext {
     @Override
     public ServerProxy getServerProxy(int port) {
         return map.get(port);
+    }
+
+    @Override
+    public void initClientProxyList(InetSocketAddress address) {
+        clientProxyListMap.put(address, new LinkedList<>());
+    }
+
+    @Override
+    public List<ServerProxy> getClientAllProxyList(InetSocketAddress address) {
+        return clientProxyListMap.get(address);
+    }
+
+
+    @Override
+    public void removeClient(InetSocketAddress address) {
+        clientProxyListMap.remove(address);
     }
 }

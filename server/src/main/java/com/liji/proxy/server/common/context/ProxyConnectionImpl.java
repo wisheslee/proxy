@@ -15,8 +15,9 @@ public class ProxyConnectionImpl implements ProxyConnection {
     private Channel proxyConnectionChannel;
 
 
-    public ProxyConnectionImpl(ServerProxy serverProxy) {
+    public ProxyConnectionImpl(ServerProxy serverProxy, Channel proxyConnectionChannel) {
         this.serverProxy = serverProxy;
+        this.proxyConnectionChannel = proxyConnectionChannel;
     }
 
     @Override

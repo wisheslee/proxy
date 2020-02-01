@@ -5,6 +5,9 @@ import com.liji.proxy.common.model.Proxy;
 import com.liji.proxy.server.proxy.ServerProxy;
 import io.netty.channel.Channel;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+
 /**
  * @author jili
  * @date 2020/1/30
@@ -18,7 +21,13 @@ public interface ProxyContext {
      * @author jili
      * @date 2020/1/30
      */
-    void newProxyServer(Proxy proxy, Channel serverManagementChannel, MessageProto.Header header);
+    void newServerProxy(Proxy proxy, Channel serverManagementChannel, MessageProto.Header header);
 
     ServerProxy getServerProxy(int port);
+
+    void initClientProxyList(InetSocketAddress address);
+
+    List<ServerProxy> getClientAllProxyList(InetSocketAddress address);
+
+    void removeClient(InetSocketAddress address);
 }

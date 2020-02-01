@@ -13,5 +13,4 @@ public interface ProxyConnection {
     ServerProxy getServerProxy();
 
     Channel getProxyConnectionChannel();
-
 }

@@ -16,4 +16,6 @@ public interface ServerManagement extends Daemon {
 
     void newServerProxy(Proxy proxy, Channel channel, MessageProto.Header header);
 
+    void closeClientProxyList(Channel serverManagementChannel);
+
 }

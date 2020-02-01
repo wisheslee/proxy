@@ -17,7 +17,7 @@ public interface ServerData {
 
     void handleClientNewConnection(String reqId, Channel serverDataChannel);
 
-    void transferProxyConnectionDataToClient(Channel proxyConnectionChannel, Object msg);
+    void transferToProxy(Channel proxyConnectionChannel, Object msg);
 
     void start();
 

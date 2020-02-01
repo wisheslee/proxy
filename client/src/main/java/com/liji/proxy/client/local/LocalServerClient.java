@@ -17,4 +17,6 @@ public interface LocalServerClient {
 
     Channel getServerDataClientChannel();
 
+    Channel getChannel();
+
 }
