@@ -11,7 +11,7 @@ import java.util.Map;
 public class ServerConfigImpl extends AbstractConfig implements ServerConfig {
 
     public ServerConfigImpl() {
-        Map<String, Object> config = new ServerConfigReader().getConfig();
+        Map<String, String> config = new ServerConfigReader().getConfig();
         initConfigResolver(config);
     }
 }

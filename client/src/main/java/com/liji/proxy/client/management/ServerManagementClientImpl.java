@@ -74,6 +74,9 @@ public class ServerManagementClientImpl implements ServerManagementClient {
 
             LOGGER.info("client start successful");
 
+            //发送secret进行认证
+            sendAuth(channelFuture.channel());
+
             //根据配置新建代理
             for (Proxy proxy : clientConfig.getProxyList()) {
                 // TODO: jili 2020/2/1 建立成功后放入 clientProxyContext
@@ -87,6 +90,13 @@ public class ServerManagementClientImpl implements ServerManagementClient {
             //channel关闭后，关闭线程组，结束java进程
             eventLoopGroup.shutdownGracefully();
         }
+    }
+
+    @Override
+    public void sendAuth(Channel clientChannel) {
+        String secret = clientApplicationContext.getClientConfig().getServerManagementSecret();
+        MessageProto.Authentication authentication = MessageProto.Authentication.newBuilder().setAuthSecret(secret).build();
+        clientChannel.writeAndFlush(MessageFactory.newMessage(authentication));
     }
 
     @Override

@@ -36,6 +36,7 @@ public class ServerDataImpl implements ServerData {
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("dataServerWorker"));
         ServerDataImpl that = this;
         try {
+            int port = serverApplicationContext.getServerConfig().getServerData().getPort();
             ChannelFuture connectFuture = serverBootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .childHandler(new ChannelInitializer<NioSocketChannel>() {
@@ -49,9 +50,9 @@ public class ServerDataImpl implements ServerData {
                         // TODO: jili 2020/1/29 auto_read 是否必要
                     })
                     .childOption(ChannelOption.AUTO_READ, false)
-                    .bind(serverApplicationContext.getServerConfig().getServerData().getPort())
+                    .bind(port)
                     .sync();
-            LOGGER.info("serverData start successful");
+            LOGGER.info("serverData start successful at port " + port);
             connectFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

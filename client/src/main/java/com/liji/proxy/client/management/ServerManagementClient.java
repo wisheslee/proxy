@@ -12,6 +12,9 @@ import io.netty.channel.Channel;
  */
 
 public interface ServerManagementClient extends Daemon {
+
+    void sendAuth(Channel clientChannel);
+
     void newProxyClient(Channel clientChannel, Proxy proxy);
 
     void handleResponse(MessageProto.Response response);

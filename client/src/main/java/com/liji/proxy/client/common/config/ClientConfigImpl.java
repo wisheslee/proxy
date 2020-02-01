@@ -18,7 +18,7 @@ public class ClientConfigImpl extends AbstractConfig implements ClientConfig {
     private static final String PROXY_SEPARATOR = ":";
 
     public ClientConfigImpl() {
-        Map<String, Object> config = new ClientConfigReader().getConfig();
+        Map<String, String> config = new ClientConfigReader().getConfig();
         initConfigResolver(config);
     }
 
@@ -27,7 +27,7 @@ public class ClientConfigImpl extends AbstractConfig implements ClientConfig {
         String key = "proxy";
         String str = configResolver.getString(key);
         if (str == null || str.length() == 0) {
-            throw new ConfigException("必须配置proxy信息");
+            throw new ConfigException("请在client.config中必须配置proxy信息，格式参考注释");
         }
         List<String> proxyStrList = configResolver.getStringList(key);
         List<Proxy> proxyList = new LinkedList<>();

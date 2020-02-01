@@ -22,9 +22,6 @@ public class ClientConfigReader extends AbstractConfigReader {
     @Override
     protected InputStream getCustomConfigStream() {
         InputStream inputStream = getOutJarFileInputStream(CUSTOM_CONFIG_PATH);
-        if (inputStream == null) {
-            throw new ConfigException("请配置client.config");
-        }
         return inputStream;
     }
 }

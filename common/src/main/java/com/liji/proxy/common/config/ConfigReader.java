@@ -12,6 +12,6 @@ public interface ConfigReader {
 
     String KEY_VALUE_SEPERATOR = "=";
 
-    Map<String, Object> getConfig();
+    Map<String, String> getConfig();
 
 }

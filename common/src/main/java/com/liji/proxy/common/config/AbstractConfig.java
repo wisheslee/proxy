@@ -12,7 +12,7 @@ public abstract class AbstractConfig implements Config {
 
     protected ConfigResolver configResolver;
 
-    protected void initConfigResolver(Map<String, Object> config) {
+    protected void initConfigResolver(Map<String, String> config) {
         this.configResolver = new ConfigResolverImpl(config);
     }
 

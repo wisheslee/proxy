@@ -70,7 +70,7 @@ public class ServerManagementImpl implements ServerManagement {
                     });
             int port = serverApplicationContext.getServerConfig().getServerManagement().getPort();
             ChannelFuture future = serverBootstrap.bind(port).sync();
-            LOGGER.info("serverManagement start successful");
+            LOGGER.info("serverManagement start successful ar port " + port);
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

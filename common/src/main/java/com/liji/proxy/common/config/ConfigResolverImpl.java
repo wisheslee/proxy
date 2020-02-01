@@ -11,31 +11,31 @@ import java.util.function.Function;
  */
 public class ConfigResolverImpl implements ConfigResolver{
 
-    private Map<String, Object> configMap;
+    private Map<String, String> configMap;
 
-    public ConfigResolverImpl(Map<String, Object> configMap) {
+    public ConfigResolverImpl(Map<String, String> configMap) {
         Objects.requireNonNull(configMap);
         this.configMap = configMap;
     }
 
     @Override
     public long getLong(String key) throws ConfigException {
-        return wrap(key, k -> (long) configMap.get(k));
+        return wrap(key, k -> Long.parseLong(configMap.get(k)));
     }
 
     @Override
     public int getInt(String key) throws ConfigException {
-        return wrap(key, k -> (int) configMap.get(k));
+        return wrap(key, k -> Integer.parseInt(configMap.get(k)));
     }
 
     @Override
     public String getString(String key) throws ConfigException {
-        return wrap(key, k -> (String) configMap.get(k));
+        return wrap(key, k -> configMap.get(k));
     }
 
     @Override
     public boolean getBoolean(String key) throws ConfigException {
-        return wrap(key, k -> (boolean) configMap.get(k));
+        return wrap(key, k -> Boolean.parseBoolean(configMap.get(k)));
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ConfigResolverImpl implements ConfigResolver{
         try {
             return function.apply(key);
         } catch (Exception e) {
-            throw new ConfigException(key + "related value can not convert to appointed type");
+            throw new ConfigException(key + " related value can not convert to appointed type");
         }
     }
 

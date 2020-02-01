@@ -16,11 +16,11 @@ import java.util.Map;
 public abstract class AbstractConfigReader implements ConfigReader {
 
     @Override
-    public Map<String, Object> getConfig() {
+    public Map<String, String> getConfig() {
         InputStream defaultConfigStream = getDefaultConfigStream();
-        Map<String, Object> defaultConfig = decodeConfig(defaultConfigStream);
+        Map<String, String> defaultConfig = decodeConfig(defaultConfigStream);
         InputStream customConfigStream = getCustomConfigStream();
-        Map<String, Object> customConfig = decodeConfig(customConfigStream);
+        Map<String, String> customConfig = decodeConfig(customConfigStream);
         quietClose(defaultConfigStream);
         quietClose(customConfigStream);
         return mix(defaultConfig, customConfig);
@@ -46,8 +46,8 @@ public abstract class AbstractConfigReader implements ConfigReader {
         }
     }
 
-    private Map<String, Object> decodeConfig(InputStream inputStream) {
-        Map<String, Object> map = new HashMap<>();
+    private Map<String, String> decodeConfig(InputStream inputStream) {
+        Map<String, String> map = new HashMap<>();
         if (inputStream == null) {
             return map;
         }
@@ -64,8 +64,8 @@ public abstract class AbstractConfigReader implements ConfigReader {
         }
     }
 
-    private Map<String, Object> mix(Map<String, Object> defaultMap, Map<String, Object> customMap) {
-        for (Map.Entry<String, Object> customEntry : customMap.entrySet()) {
+    private Map<String, String> mix(Map<String, String> defaultMap, Map<String, String> customMap) {
+        for (Map.Entry<String, String> customEntry : customMap.entrySet()) {
             defaultMap.put(customEntry.getKey(), customEntry.getValue());
         }
         return defaultMap;

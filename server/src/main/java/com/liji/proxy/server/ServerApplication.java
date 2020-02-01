@@ -14,9 +14,9 @@ import com.liji.proxy.server.management.ServerManagementImpl;
  * @date 2020/1/28
  */
 public class ServerApplication {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         ServerData serverData = new ServerDataImpl();
-        new Thread(() -> serverData.start()).run();
+        new Thread(() -> serverData.start()).start();
 
         ServerManagement serverManagement = new ServerManagementImpl();
         serverManagement.start();
