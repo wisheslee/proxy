@@ -21,7 +21,7 @@ public class ServerProxyImpl implements ServerProxy {
     private Proxy proxy;
     private Channel serverProxyChannel;
     private Channel serverManagementChannel;
-    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getServerApplicationContext();
+    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getInstance();
 
 
     public ServerProxyImpl(Proxy proxy, Channel serverProxyChannel, Channel serverManagementChannel) {

@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class ServerDataClientImpl implements ServerDataClient {
 
-    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.newInstance();
+    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.getInstance();
     private Channel localServerClientChannel;
     private Channel channel;
 

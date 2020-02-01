@@ -9,14 +9,21 @@ import com.liji.proxy.client.common.config.ClientConfigImpl;
  */
 public class ClientApplicationContextImpl implements ClientApplicationContext{
 
-    private static ClientApplicationContext clientApplicationContext = new ClientApplicationContextImpl();
-    private ClientConfig clientConfig = new ClientConfigImpl();
+    static {
+        clientConfig = new ClientConfigImpl();
+        clientApplicationContext = new ClientApplicationContextImpl();
+    }
 
-    public static ClientApplicationContext newInstance() {
+    private static ClientConfig clientConfig;
+    private static ClientApplicationContext clientApplicationContext;
+
+    private ClientApplicationContextImpl() {
+    }
+
+    public static ClientApplicationContext getInstance() {
         return clientApplicationContext;
     }
 
-    private ClientApplicationContextImpl() { }
 
     @Override
     public ClientConfig getClientConfig() {

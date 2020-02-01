@@ -1,5 +1,6 @@
 package com.liji.proxy.server.common.context;
 
+import com.liji.proxy.common.config.ConfigResolver;
 import com.liji.proxy.server.common.config.ServerConfig;
 import com.liji.proxy.server.common.config.ServerConfigImpl;
 
@@ -8,16 +9,25 @@ import com.liji.proxy.server.common.config.ServerConfigImpl;
  * @date 2020/1/31
  */
 public class ServerApplicationContextImpl implements ServerApplicationContext {
-    private static ServerApplicationContext serverApplicationContext = new ServerApplicationContextImpl();
-    private ConnectionContext connectionContext = new ConnectionContextImpl();
-    private ProxyContext proxyContext = new ProxyContextImpl();
-    private ServerConfig serverConfig = new ServerConfigImpl();
 
-    private ServerApplicationContextImpl() {
+    private static ServerConfig serverConfig;
+    private static ServerApplicationContext serverApplicationContext;
+
+    static {
+        serverConfig = new ServerConfigImpl();
+        serverApplicationContext = new ServerApplicationContextImpl();
     }
 
-    public static ServerApplicationContext getServerApplicationContext() {
+    public static ServerApplicationContext getInstance() {
         return serverApplicationContext;
+    }
+
+
+    private ConnectionContext connectionContext = new ConnectionContextImpl();
+    private ProxyContext proxyContext = new ProxyContextImpl();
+
+
+    private ServerApplicationContextImpl() {
     }
 
     @Override

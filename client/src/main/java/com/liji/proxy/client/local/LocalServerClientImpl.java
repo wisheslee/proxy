@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 @Slf4j
 public class LocalServerClientImpl implements LocalServerClient {
 
-    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.newInstance();
+    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.getInstance();
     private Channel serverDataClientChannel;
     private Channel channel;
 

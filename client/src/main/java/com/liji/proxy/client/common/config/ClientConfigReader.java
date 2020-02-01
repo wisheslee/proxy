@@ -1,6 +1,7 @@
 package com.liji.proxy.client.common.config;
 
 import com.liji.proxy.common.config.AbstractConfigReader;
+import com.liji.proxy.common.exception.ConfigException;
 import com.liji.proxy.common.exception.ProxyException;
 
 import java.io.InputStream;
@@ -22,7 +23,7 @@ public class ClientConfigReader extends AbstractConfigReader {
     protected InputStream getCustomConfigStream() {
         InputStream inputStream = getOutJarFileInputStream(CUSTOM_CONFIG_PATH);
         if (inputStream == null) {
-            throw new ProxyException("请配置client.config");
+            throw new ConfigException("请配置client.config");
         }
         return inputStream;
     }

@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 public class ServerDataNewConnectionFromClientHandler extends ChannelInboundHandlerAdapter {
 
     private ByteBuf innerBuffer;
-    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getServerApplicationContext();
+    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getInstance();
     private ServerData serverData;
 
     public ServerDataNewConnectionFromClientHandler(ServerData serverData) {

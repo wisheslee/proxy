@@ -21,7 +21,7 @@ import java.util.UUID;
 @ChannelHandler.Sharable
 public class ServerProxyNewConnectionHandler extends ChannelInboundHandlerAdapter {
 
-    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getServerApplicationContext();
+    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getInstance();
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) {

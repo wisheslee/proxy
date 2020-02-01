@@ -19,4 +19,6 @@ public interface ServerData {
 
     void transferProxyConnectionDataToClient(Channel proxyConnectionChannel, Object msg);
 
+    void start();
+
 }

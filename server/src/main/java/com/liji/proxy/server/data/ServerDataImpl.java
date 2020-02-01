@@ -3,6 +3,7 @@ package com.liji.proxy.server.data;
 import com.liji.proxy.common.handler.GlobalSharableHandlerFactory;
 import com.liji.proxy.server.common.context.ProxyConnection;
 import com.liji.proxy.server.common.context.ServerApplicationContext;
+import com.liji.proxy.server.common.context.ServerApplicationContextImpl;
 import com.liji.proxy.server.data.handler.TransferProxyConnectionDataToClientHandler;
 import com.liji.proxy.server.data.handler.ServerDataNewConnectionFromClientHandler;
 import io.netty.bootstrap.ServerBootstrap;
@@ -21,13 +22,15 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/1/27
  */
 @Slf4j
-public class ServerDataImpl implements Runnable, ServerData {
+public class ServerDataImpl implements ServerData {
 
-    private ServerApplicationContext serverApplicationContext;
+    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getInstance();
 
+    public ServerDataImpl() {
+    }
 
     @Override
-    public void run() {
+    public void start() {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         NioEventLoopGroup bossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("dataServerBoss"));
         NioEventLoopGroup workerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("dataServerWorker"));
@@ -48,6 +51,7 @@ public class ServerDataImpl implements Runnable, ServerData {
                     .childOption(ChannelOption.AUTO_READ, false)
                     .bind(serverApplicationContext.getServerConfig().getServerData().getPort())
                     .sync();
+            LOGGER.info("serverData start successful");
             connectFuture.channel().closeFuture().sync();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);

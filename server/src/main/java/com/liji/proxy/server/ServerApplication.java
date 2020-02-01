@@ -1,7 +1,12 @@
 package com.liji.proxy.server;
 
-import com.liji.proxy.common.constants.DefaultConstants;
+import com.liji.proxy.server.common.config.ServerConfig;
+import com.liji.proxy.server.common.config.ServerConfigImpl;
+import com.liji.proxy.server.common.context.ServerApplicationContext;
+import com.liji.proxy.server.common.context.ServerApplicationContextImpl;
+import com.liji.proxy.server.data.ServerData;
 import com.liji.proxy.server.data.ServerDataImpl;
+import com.liji.proxy.server.management.ServerManagement;
 import com.liji.proxy.server.management.ServerManagementImpl;
 
 /**
@@ -10,11 +15,10 @@ import com.liji.proxy.server.management.ServerManagementImpl;
  */
 public class ServerApplication {
     public static void main(String[] args) throws InterruptedException {
-        Thread managementThread = new Thread(new ServerManagementImpl());
-        Thread dataThread = new Thread(new ServerDataImpl());
-        managementThread.start();
-        dataThread.start();
-        managementThread.join();
-        dataThread.join();
+        ServerData serverData = new ServerDataImpl();
+        new Thread(() -> serverData.start()).run();
+
+        ServerManagement serverManagement = new ServerManagementImpl();
+        serverManagement.start();
     }
 }

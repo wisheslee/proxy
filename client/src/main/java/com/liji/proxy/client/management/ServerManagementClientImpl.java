@@ -30,12 +30,15 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/1/16
  */
 @Slf4j
-public class ServerManagementClientImpl implements Runnable, ServerManagementClient {
+public class ServerManagementClientImpl implements ServerManagementClient {
 
-    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.newInstance();
+    private ClientApplicationContext clientApplicationContext = ClientApplicationContextImpl.getInstance();
+
+    public ServerManagementClientImpl() {
+    }
 
     @Override
-    public void run() {
+    public void start() {
         ClientConfig clientConfig = clientApplicationContext.getClientConfig();
         Bootstrap bootstrap = new Bootstrap();
         NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("clientGroup"));
@@ -69,8 +72,11 @@ public class ServerManagementClientImpl implements Runnable, ServerManagementCli
             Server serverManagement = clientConfig.getServerManagement();
             ChannelFuture channelFuture = bootstrap.connect(serverManagement.getHost(), serverManagement.getPort()).sync();
 
+            LOGGER.info("client start successful");
+
             //根据配置新建代理
             for (Proxy proxy : clientConfig.getProxyList()) {
+                // TODO: jili 2020/2/1 建立成功后放入 clientProxyContext
                 newProxyClient(channelFuture.channel(), proxy);
             }
             //阻塞一直到channel被关闭

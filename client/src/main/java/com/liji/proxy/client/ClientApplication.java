@@ -1,12 +1,19 @@
 package com.liji.proxy.client;
 
+import com.liji.proxy.client.common.config.ClientConfig;
+import com.liji.proxy.client.common.config.ClientConfigImpl;
+import com.liji.proxy.client.common.context.ClientApplicationContext;
+import com.liji.proxy.client.common.context.ClientApplicationContextImpl;
+import com.liji.proxy.client.management.ServerManagementClient;
+import com.liji.proxy.client.management.ServerManagementClientImpl;
+
 /**
  * @author jili
  * @date 2020/1/31
  */
 public class ClientApplication {
     public static void main(String[] args) {
-//        new ClientApplication("127.0.0.1", 8080, 30000, DefaultConstants.SERVER_HOST,
-//        DefaultConstants.SERVER_MANAGEMENT_PORT, DefaultConstants.SERVER_DATA_PORT).clientChannel
+        ServerManagementClient client = new ServerManagementClientImpl();
+        client.start();
     }
 }

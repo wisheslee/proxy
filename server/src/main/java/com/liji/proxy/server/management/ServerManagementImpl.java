@@ -30,12 +30,16 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/1/16
  */
 @Slf4j
-public class ServerManagementImpl implements Runnable, ServerManagement {
+public class ServerManagementImpl implements ServerManagement {
 
-    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getServerApplicationContext();
+    private ServerApplicationContext serverApplicationContext = ServerApplicationContextImpl.getInstance();
+
+    public ServerManagementImpl() {
+
+    }
 
     @Override
-    public void run() {
+    public void start() {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         NioEventLoopGroup boss = new NioEventLoopGroup(0, new DefaultThreadFactory("managementServerBoss"));
         NioEventLoopGroup worker = new NioEventLoopGroup(0, new DefaultThreadFactory("managementServerWorker"));
@@ -66,6 +70,7 @@ public class ServerManagementImpl implements Runnable, ServerManagement {
                     });
             int port = serverApplicationContext.getServerConfig().getServerManagement().getPort();
             ChannelFuture future = serverBootstrap.bind(port).sync();
+            LOGGER.info("serverManagement start successful");
             future.channel().closeFuture().sync();
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
