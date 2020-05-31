@@ -26,7 +26,7 @@ public class ServerProxyTransferDataToServerDataHandler extends ChannelInboundHa
 
         int proxyLocalPort = ((InetSocketAddress) ctx.channel().localAddress()).getPort();
         ServerProxy serverProxy = getServerProxy(proxyLocalPort);
-        serverProxy.transferDataToServerData(serverDataChannel, msg);
+        serverProxy.transferDataToServerData(serverDataChannel, ctx, msg);
     }
 
     private ServerProxy getServerProxy(int port) {

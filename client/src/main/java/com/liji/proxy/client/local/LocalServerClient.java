@@ -11,7 +11,7 @@ import io.netty.channel.Channel;
 public interface LocalServerClient {
     void newClientToServerData(Channel managementClientChannel, String reqId, MessageProto.Header header);
 
-    void transferToServerData(Object msg);
+    void transferToServerData(Object msg, Channel inboundChannel);
 
     void setServerDataClientChannel(Channel serverDataClientChannel);
 

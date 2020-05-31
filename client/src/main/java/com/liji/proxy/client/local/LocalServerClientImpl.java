@@ -38,6 +38,7 @@ public class LocalServerClientImpl implements LocalServerClient {
 
         ChannelFuture localServerConnectFuture = localServerBootstrap
                 .channel(NioSocketChannel.class)
+                .option(ChannelOption.AUTO_READ, false)
                 .handler(new ChannelInitializer<NioSocketChannel>() {
                     @Override
                     protected void initChannel(NioSocketChannel ch) throws Exception {
@@ -74,8 +75,17 @@ public class LocalServerClientImpl implements LocalServerClient {
     }
 
     @Override
-    public void transferToServerData(Object msg) {
-        serverDataClientChannel.writeAndFlush(msg);
+    public void transferToServerData(Object msg, Channel inboundChannel) {
+        serverDataClientChannel.writeAndFlush(msg).addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture future) throws Exception {
+                if (future.isSuccess()) {
+                    inboundChannel.read();
+                } else {
+                    future.channel().close();
+                }
+            }
+        });
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.liji.proxy.server.proxy;
 import com.liji.proxy.common.model.Proxy;
 import com.liji.proxy.common.model.Server;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 
 /**
@@ -18,7 +19,7 @@ public interface ServerProxy {
 
     void startRead(Channel proxyConnectionChannel);
 
-    void transferDataToServerData(Channel proxyToServerDataChannel, Object msg);
+    void transferDataToServerData(Channel proxyToServerDataChannel, ChannelHandlerContext ctx, Object msg);
 
     Proxy getProxy();
 

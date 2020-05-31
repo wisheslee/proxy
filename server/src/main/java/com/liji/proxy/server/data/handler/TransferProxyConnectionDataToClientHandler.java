@@ -21,7 +21,7 @@ public class TransferProxyConnectionDataToClientHandler extends ChannelInboundHa
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         ProxyConnection proxyConnection = ctx.channel().attr(ServerData.PROXY_CONNECTION_KEY).get();
-        serverData.transferToProxy(proxyConnection.getProxyConnectionChannel(), msg);
+        serverData.transferToProxy(proxyConnection.getProxyConnectionChannel(), ctx, msg);
     }
 }
 

@@ -1,9 +1,7 @@
 package com.liji.proxy.client.local.handler;
 
 import com.liji.proxy.client.local.LocalServerClient;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.*;
 
 /**
  * @author jili
@@ -19,6 +17,6 @@ public class LocalServerTransferToServerDataHandler extends ChannelInboundHandle
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        localServerClient.transferToServerData(msg);
+        localServerClient.transferToServerData(msg, ctx.channel());
     }
 }

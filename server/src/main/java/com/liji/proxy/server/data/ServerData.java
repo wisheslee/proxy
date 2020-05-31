@@ -3,6 +3,7 @@ package com.liji.proxy.server.data;
 
 import com.liji.proxy.server.common.context.ProxyConnection;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
 import io.netty.util.AttributeKey;
 
 /**
@@ -17,7 +18,7 @@ public interface ServerData {
 
     void handleClientNewConnection(String reqId, Channel serverDataChannel);
 
-    void transferToProxy(Channel proxyConnectionChannel, Object msg);
+    void transferToProxy(Channel proxyConnectionChannel, ChannelHandlerContext ctx, Object msg);
 
     void start();
 

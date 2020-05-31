@@ -29,6 +29,7 @@ public class ServerDataClientImpl implements ServerDataClient {
 
     public ServerDataClientImpl(LocalServerClient localServerClient, Channel managementClientChannel, String reqId, MessageProto.Header header) {
 
+
         setLocalServerClientChannel(localServerClient.getChannel());
 
         Server serverData = clientApplicationContext.getClientConfig().getServerData();
@@ -70,6 +71,7 @@ public class ServerDataClientImpl implements ServerDataClient {
                     managementClientChannel.writeAndFlush(MessageResponseFactory.success(header));
                     //给serverData发送reqId
                     future.channel().writeAndFlush(future.channel().alloc().buffer().writeBytes(reqId.getBytes(StandardCharsets.UTF_8)));
+                    localServerClientChannel.read();
                 } else {
                     Throwable cause = future.cause();
                     LOGGER.error(cause.getMessage(), cause);

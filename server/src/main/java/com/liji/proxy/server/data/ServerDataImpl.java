@@ -73,11 +73,16 @@ public class ServerDataImpl implements ServerData {
 
 
     @Override
-    public void transferToProxy(Channel proxyConnectionChannel, Object msg) {
+    public void transferToProxy(Channel proxyConnectionChannel, ChannelHandlerContext ctx, Object msg) {
         proxyConnectionChannel.writeAndFlush(msg).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
-                future.channel().read();
+                if (future.isSuccess()) {
+                    // was able to flush out data, start to read the next chunk
+                    ctx.channel().read();
+                } else {
+                    future.channel().close();
+                }
             }
         });
     }

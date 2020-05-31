@@ -47,12 +47,14 @@ public class ServerProxyImpl implements ServerProxy {
     }
 
     @Override
-    public void transferDataToServerData(Channel proxyToServerDataChannel, Object msg) {
+    public void transferDataToServerData(Channel proxyToServerDataChannel, ChannelHandlerContext ctx, Object msg) {
         proxyToServerDataChannel.writeAndFlush(msg).addListener(new ChannelFutureListener() {
             @Override
             public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
-                    future.channel().read();
+                    ctx.channel().read();
+                } else {
+                    future.channel().close();
                 }
             }
         });
