@@ -55,6 +55,7 @@ public abstract class AbstractConfigReader implements ConfigReader {
         String line = null;
         try {
             while ((line = reader.readLine()) != null) {
+                if (line.startsWith("#")) continue;
                 String[] strs = line.split(ConfigReader.KEY_VALUE_SEPERATOR);
                 map.put(strs[0], strs[1]);
             }
