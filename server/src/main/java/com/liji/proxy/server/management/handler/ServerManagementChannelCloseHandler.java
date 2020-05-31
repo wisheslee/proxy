@@ -1,6 +1,7 @@
 package com.liji.proxy.server.management.handler;
 
 import com.liji.proxy.server.management.ServerManagement;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import lombok.extern.slf4j.Slf4j;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2020/2/2
  */
 @Slf4j
+@ChannelHandler.Sharable
 public class ServerManagementChannelCloseHandler extends ChannelInboundHandlerAdapter {
 
     private ServerManagement serverManagement;

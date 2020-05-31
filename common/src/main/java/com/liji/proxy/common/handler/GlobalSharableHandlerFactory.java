@@ -8,7 +8,7 @@ import io.netty.handler.logging.LoggingHandler;
  * @date 2020/1/29
  */
 public class GlobalSharableHandlerFactory {
-    private static LoggingHandler loggingHandler = new LoggingHandler(LogLevel.INFO);
+    private static LoggingHandler loggingHandler = new LoggingHandler(LogLevel.ERROR);
     private static ExceptionHandler exceptionHandler = new ExceptionHandler();
 
     public static LoggingHandler getLoggingHandler() {

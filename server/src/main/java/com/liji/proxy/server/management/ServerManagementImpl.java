@@ -109,7 +109,5 @@ public class ServerManagementImpl implements ServerManagement {
             LOGGER.info("close serverProxy at port {}", serverProxy.getProxy().getProxyPort());
             serverProxy.getServerProxyChannel().close();
         }
-
-
     }
 }

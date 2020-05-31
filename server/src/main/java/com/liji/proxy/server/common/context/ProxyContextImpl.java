@@ -36,6 +36,7 @@ public class ProxyContextImpl implements ProxyContext {
     private EventLoopGroup proxyServerBossGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("proxyServerBossGroup"));
     private EventLoopGroup proxyServerWorkerGroup = new NioEventLoopGroup(0, new DefaultThreadFactory("proxyServerWorkerGroup"));
     private Map<Integer, ServerProxy> map = new ConcurrentHashMap<>();
+    //每一个client开了几个代理
     private Map<InetSocketAddress, List<ServerProxy>> clientProxyListMap = new ConcurrentHashMap<>();
 
     public static ProxyContext newInstance() {
@@ -115,6 +116,13 @@ public class ProxyContextImpl implements ProxyContext {
 
     @Override
     public void removeClient(InetSocketAddress address) {
+        List<ServerProxy> proxyList = clientProxyListMap.get(address);
+        for (ServerProxy proxy : proxyList) {
+            if (proxy != null) {
+                map.remove(proxy.getProxy().getProxyPort());
+            }
+        }
         clientProxyListMap.remove(address);
+
     }
 }

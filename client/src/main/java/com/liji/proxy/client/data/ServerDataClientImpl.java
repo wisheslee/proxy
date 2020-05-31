@@ -63,7 +63,7 @@ public class ServerDataClientImpl implements ServerDataClient {
 
         connectFuture.addListener(new ChannelFutureListener() {
             @Override
-            public void operationComplete(ChannelFuture future) throws Exception {
+                public void operationComplete(ChannelFuture future) throws Exception {
                 if (future.isSuccess()) {
                     //往localServerClientChannel里面塞serverDataClientChannel
                     localServerClientChannel.attr(AttributeKey.valueOf("serverDataClientChannel")).set(future.channel());
